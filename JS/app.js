@@ -1,6 +1,7 @@
 // základní proměnné
 const gridContainer = document.querySelector('.grid-container');
 const listOfColors = ['blue', 'red', 'yellow', 'purple', 'gold', 'brown', 'aqua', 'teal'];
+// zde tovřími kopi pole tak aby byla každá barva 2x (protože hledáme dvě shodné)
 const colorsPickList = [...listOfColors, ...listOfColors];
 const gridCount = colorsPickList.length;
 
@@ -8,6 +9,10 @@ const gridCount = colorsPickList.length;
 // nastavuje nám kolik budeme mít zobrazených karet
 let revealedCount = 0;
 let activeGrid = null;
+/*
+     Tato mocnina referuje k malému oknu mezi tahy hráčů
+        Jinými slovy čekáme než se špatný tah hráče opět otocí na původní pozici
+*/
 let awaitingEndOfMove = false;
 
 // tvoření funkce pro vytvoření naše dlaždice
@@ -18,6 +23,41 @@ function buildSingleGrid(color){
     element.classList.add('single-grid');
     // nastavujeme vytvořennému elementu atribut s náhodnou barvu
     element.setAttribute("data-color", color);
+    element.setAttribute("data-revealed", "false");
+
+    // tvorba listeneru na klik, 
+    element.addEventListener('click', () => {
+        if(awaitingEndOfMove){
+            return;
+        }
+
+        // upravujeme styl dlaždice
+        element.style.backgroundColor = color;
+
+        // kontroluje zda není aktivní dlaždice
+        if(!activeGrid){
+
+            // pokud není rovná se vytvořenému elementu
+            // active referuje ke kliklé dlaždici
+            activeGrid = element;
+            
+            return;
+        }
+
+        // zamezuje kliknout na další dlaždice
+        awaitingEndOfMove = true;
+
+        // díky tomuhle se karta vrací do původiní pozice a čistí se proměnné ať můžeme provést další tah
+        setTimeout( () =>{
+            element.style.background = null;
+            activeGrid.style.background = null;
+
+            awaitingEndOfMove = false;
+            activeGrid = null;
+
+        }, 1000);
+
+    });
 
     return element;
 }
