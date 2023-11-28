@@ -23,12 +23,15 @@ function buildSingleGrid(color){
     element.classList.add('single-grid');
     // nastavujeme vytvořennému elementu atribut s náhodnou barvu
     element.setAttribute("data-color", color);
-    // díky tomuhle docílíme 
+    // díky tomuhle docílíme rozdíl mezi zobrazeným X nezobrazeným elementem
     element.setAttribute("data-revealed", "false");
     
     // tvorba listeneru na klik, 
     element.addEventListener('click', () => {
-        if(awaitingEndOfMove){
+        const revealed = element.getAttribute("data-revealed")
+
+        // zamezujeme tímto rovnost když klikneme na ten a jeden samý element
+        if(awaitingEndOfMove || revealed === "true" || element === activeGrid){
             return;
         }
 
@@ -50,7 +53,9 @@ function buildSingleGrid(color){
 
         // zde prvně kontrolujeme pokud se barvy shodují
         if(matchingColor === color){
-
+            // pokud se barva rovná dlaždice zůstane zobrazena a nelze s ní již hrát
+            activeGrid.setAttribute("data-revealed", true);
+            element.setAttribute("data-revealed", true);
             // pokud ano, čistíme stav hry
             awaitingEndOfMove = false;
             activeGrid = null;
