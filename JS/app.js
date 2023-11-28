@@ -23,8 +23,9 @@ function buildSingleGrid(color){
     element.classList.add('single-grid');
     // nastavujeme vytvořennému elementu atribut s náhodnou barvu
     element.setAttribute("data-color", color);
+    // díky tomuhle docílíme 
     element.setAttribute("data-revealed", "false");
-
+    
     // tvorba listeneru na klik, 
     element.addEventListener('click', () => {
         if(awaitingEndOfMove){
@@ -41,6 +42,25 @@ function buildSingleGrid(color){
             // active referuje ke kliklé dlaždici
             activeGrid = element;
             
+            return;
+        }
+
+        // sekce pro kontrolu zda se barva shoduje
+        const matchingColor = activeGrid.getAttribute("data-color");
+
+        // zde prvně kontrolujeme pokud se barvy shodují
+        if(matchingColor === color){
+
+            // pokud ano, čistíme stav hry
+            awaitingEndOfMove = false;
+            activeGrid = null;
+            revealedCount += 2;
+
+            // zde kontrolujeme jestli hráč dohrál hru a vyhrál
+            if(revealedCount === gridCount){
+                alert('You win! This is a end of game.');
+            }
+
             return;
         }
 
